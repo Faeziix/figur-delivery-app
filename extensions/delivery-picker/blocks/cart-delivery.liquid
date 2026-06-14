@@ -8,8 +8,8 @@
 -%}
 
 <div
-  class="cart-delivery spacing-style {{ block.settings.alignment }}"
-  style="{% render 'spacing-style', settings: block.settings %}"
+  class="cart-delivery {{ block.settings.alignment }}"
+  style="padding-block-start: {{ block.settings['padding-block-start'] }}px; padding-block-end: {{ block.settings['padding-block-end'] }}px; padding-inline-start: {{ block.settings['padding-inline-start'] }}px; padding-inline-end: {{ block.settings['padding-inline-end'] }}px;"
   {{ block.shopify_attributes }}
 >
   <p class="cart-delivery__title">{{ 'content.cart_delivery.title' | t }}</p>
@@ -114,11 +114,6 @@
       "id": "padding-inline-end",
       "label": "Right",
       "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0
-    }
-  ],
-  "presets": [
-    {
-      "name": "Delivery Picker"
     }
   ]
 }

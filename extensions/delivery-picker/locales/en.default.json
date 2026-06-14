@@ -1,0 +1,11 @@
+{
+  "content": {
+    "cart_delivery": {
+      "title": "Scheduled Delivery",
+      "select_time": "Select delivery time",
+      "slot_label": "Delivery time slot",
+      "helper": "Choose your preferred delivery date and time.",
+      "error": "Please select a delivery date and time before checking out."
+    }
+  }
+}

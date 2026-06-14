@@ -1,17 +1,3 @@
-/**
- * Figur Delivery Picker — App Extension (server-driven)
- *
- * Replaces the hardcoded theme picker with a proxy-powered thin client.
- * The rules engine lives on the app server; this file just renders whatever
- * dates/slots the /apps/delivery/availability endpoint returns.
- *
- * Cart attribute contract (unchanged from the theme picker):
- *   "Delivery Date"   → human-readable display date
- *   "Delivery Slot"   → human-readable slot label
- *   "_Delivery Date"  → ISO date (YYYY-MM-DD) for re-hydration
- *   "_Delivery Slot"  → raw slot value (HH:MM-HH:MM) for re-hydration
- */
-
 (function () {
   const configEl = document.getElementById('figur-delivery-config');
   const PROXY_URL = configEl?.dataset.proxyUrl ?? '/apps/delivery/availability';
