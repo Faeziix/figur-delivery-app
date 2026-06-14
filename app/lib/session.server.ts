@@ -12,12 +12,27 @@ function shopKey(shop: string) {
 
 let redis: Redis | null = null;
 
+function resolveRedisCredentials(): { url: string; token: string } | null {
+  const url =
+    process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  return { url, token };
+}
+
 function getRedis(): Redis | null {
   if (redis) return redis;
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  redis = new Redis({ url, token });
+  const credentials = resolveRedisCredentials();
+  if (!credentials) {
+    if (process.env.NODE_ENV === "production") {
+      console.warn(
+        "[session] No Redis credentials found — sessions will not persist across serverless invocations."
+      );
+    }
+    return null;
+  }
+  redis = new Redis(credentials);
   return redis;
 }
 
