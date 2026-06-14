@@ -1,0 +1,125 @@
+{%- liquid
+  assign attr_date = block.settings.attribute_date | default: 'Delivery Date'
+  assign attr_slot = block.settings.attribute_slot | default: 'Delivery Slot'
+  assign iso_key = '_' | append: attr_date
+  assign slot_value_key = '_' | append: attr_slot
+  assign saved_date = cart.attributes[iso_key]
+  assign saved_slot = cart.attributes[slot_value_key]
+-%}
+
+<div
+  class="cart-delivery spacing-style {{ block.settings.alignment }}"
+  style="{% render 'spacing-style', settings: block.settings %}"
+  {{ block.shopify_attributes }}
+>
+  <p class="cart-delivery__title">{{ 'content.cart_delivery.title' | t }}</p>
+
+  <cart-delivery
+    class="cart-delivery"
+    data-attr-date="{{ attr_date }}"
+    data-attr-slot="{{ attr_slot }}"
+    data-saved-date="{{ saved_date }}"
+    data-saved-slot="{{ saved_slot }}"
+    data-slot-placeholder="{{ 'content.cart_delivery.select_time' | t | escape }}"
+    data-error-text="{{ 'content.cart_delivery.error' | t | escape }}"
+  >
+    <div class="cart-delivery__calendar-wrap">
+      <input
+        type="text"
+        class="cart-delivery__date-input"
+        value="{{ saved_date }}"
+        readonly
+        aria-hidden="true"
+        tabindex="-1"
+      >
+    </div>
+
+    <div class="cart-delivery__time-field">
+      <select
+        class="cart-delivery__slot-select"
+        aria-label="{{ 'content.cart_delivery.slot_label' | t }}"
+      >
+        <option value="">{{ 'content.cart_delivery.select_time' | t }}</option>
+      </select>
+      <button type="button" class="cart-delivery__time-icon" aria-hidden="true" tabindex="-1">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="cart-delivery__helper">{{ 'content.cart_delivery.helper' | t }}</p>
+    <p class="cart-delivery__error" role="alert" hidden>{{ 'content.cart_delivery.error' | t }}</p>
+  </cart-delivery>
+</div>
+
+{% schema %}
+{
+  "name": "Delivery Picker",
+  "target": "section",
+  "javascript": "cart-delivery.js",
+  "stylesheet": "cart-delivery.css",
+  "enabled_on": {
+    "templates": ["cart"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "attribute_date",
+      "label": "Cart attribute key — date",
+      "default": "Delivery Date"
+    },
+    {
+      "type": "text",
+      "id": "attribute_slot",
+      "label": "Cart attribute key — slot",
+      "default": "Delivery Slot"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0, "max": 100, "step": 1, "unit": "px", "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Delivery Picker"
+    }
+  ]
+}
+{% endschema %}

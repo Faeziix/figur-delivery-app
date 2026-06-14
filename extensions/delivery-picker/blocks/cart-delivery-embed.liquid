@@ -1,0 +1,22 @@
+{{- 'flatpickr.min.css' | asset_url | stylesheet_tag -}}
+{{- 'cart-delivery.css' | asset_url | stylesheet_tag -}}
+<script src="{{ 'flatpickr.min.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'cart-delivery.js' | asset_url }}" defer="defer"></script>
+
+<div
+  id="figur-delivery-config"
+  data-proxy-url="{{ routes.root_url }}apps/delivery/availability"
+  data-attr-date="Delivery Date"
+  data-attr-slot="Delivery Slot"
+  hidden
+></div>
+
+{% schema %}
+{
+  "name": "Delivery Picker (global)",
+  "target": "body",
+  "javascript": "cart-delivery.js",
+  "stylesheet": "cart-delivery.css",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,62 @@
+.login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f6f6f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.login__card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-block-end: 1.5rem;
+}
+
+.login__card label {
+  display: block;
+  margin-block-end: 1rem;
+  font-size: 0.875rem;
+}
+
+.login__card label span {
+  display: block;
+  margin-block-end: 0.25rem;
+  font-weight: 500;
+}
+
+.login__card input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+}
+
+.login__card button {
+  width: 100%;
+  padding: 0.625rem;
+  background: #008060;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login__error {
+  color: #d72c0d;
+  font-size: 0.875rem;
+  margin-block-start: 0.25rem;
+}

@@ -1,0 +1,27 @@
+name = "Figur Delivery Scheduler"
+client_id = ""
+application_url = "https://figur-delivery.vercel.app"
+embedded = true
+handle = "figur-delivery"
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "figur-7317.myshopify.com"
+
+[access_scopes]
+scopes = "read_products,write_products,read_metafields,write_metafields"
+
+[webhooks]
+api_version = "2025-01"
+
+[[webhooks.subscriptions]]
+topics = ["app/uninstalled"]
+uri = "/webhooks/app-uninstalled"
+
+[app_proxy]
+url = "https://figur-delivery.vercel.app/proxy"
+subpath = "delivery"
+prefix = "apps"
+
+[pos]
+embedded = false

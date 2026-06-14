@@ -1,0 +1,22 @@
+{
+  "blocks": {
+    "cart-delivery": {
+      "name": "Delivery Picker",
+      "settings": {
+        "attribute_date": { "label": "Cart attribute — date key" },
+        "attribute_slot": { "label": "Cart attribute — slot key" },
+        "alignment": {
+          "label": "Alignment",
+          "options": {
+            "left": "Left",
+            "center": "Center",
+            "right": "Right"
+          }
+        }
+      }
+    },
+    "cart-delivery-embed": {
+      "name": "Delivery Picker (global)"
+    }
+  }
+}
