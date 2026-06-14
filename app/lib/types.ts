@@ -19,6 +19,7 @@ export const DeliverySettingsSchema = z.object({
   cutoffs: z.array(CutoffRuleSchema),
   maxDaysAhead: z.number().int().min(1).max(90).default(14),
   leadTimeDays: z.number().int().min(0).max(30).default(0),
+  sameDayBufferMinutes: z.number().int().min(0).max(720).default(120),
   disabledWeekdays: z.array(z.number().int().min(0).max(6)).default([]),
   blackoutDates: z.array(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).default([]),
 });
@@ -54,20 +55,19 @@ export const DEFAULT_SETTINGS: DeliverySettings = {
   timezone: "Asia/Dubai",
   slots: [
     { value: "09:00-11:00", label: "9:00 AM – 11:00 AM" },
-    { value: "10:00-12:00", label: "10:00 AM – 12:00 PM" },
     { value: "11:00-13:00", label: "11:00 AM – 1:00 PM" },
     { value: "13:00-15:00", label: "1:00 PM – 3:00 PM" },
     { value: "15:00-17:00", label: "3:00 PM – 5:00 PM" },
-    { value: "16:00-18:00", label: "4:00 PM – 6:00 PM" },
     { value: "17:00-19:00", label: "5:00 PM – 7:00 PM" },
   ],
+  // Same-day until 16:00 (buffer-filtered); after 16:00 → next day, all windows.
   cutoffs: [
-    { before: "12:00", earliestOffsetDays: 0, slots: ["16:00-18:00"] },
-    { before: "16:00", earliestOffsetDays: 1, slots: "all" },
-    { before: "24:00", earliestOffsetDays: 1, slots: ["16:00-18:00"] },
+    { before: "16:00", earliestOffsetDays: 0, slots: "all" },
+    { before: "24:00", earliestOffsetDays: 1, slots: "all" },
   ],
   maxDaysAhead: 14,
   leadTimeDays: 0,
+  sameDayBufferMinutes: 120,
   disabledWeekdays: [],
   blackoutDates: [],
 };

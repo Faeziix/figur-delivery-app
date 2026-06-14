@@ -26,6 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     slotCount: settings.slots.length,
     maxDaysAhead: settings.maxDaysAhead,
     leadTimeDays: settings.leadTimeDays,
+    sameDayBufferMinutes: settings.sameDayBufferMinutes,
   });
 };
 
@@ -47,6 +48,7 @@ export default function Dashboard() {
                   <StatCard label="Timezone" value={data.timezone} />
                   <StatCard label="Time slots" value={`${data.slotCount} available`} />
                   <StatCard label="Lead time" value={data.leadTimeDays === 0 ? "None" : `${data.leadTimeDays} day(s)`} />
+                  <StatCard label="Same-day buffer" value={data.sameDayBufferMinutes === 0 ? "None" : `${data.sameDayBufferMinutes} min`} />
                   <StatCard label="Booking window" value={`${data.maxDaysAhead} days ahead`} />
                 </InlineStack>
               </BlockStack>

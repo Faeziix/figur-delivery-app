@@ -53,13 +53,34 @@ function isDisabledDay(
   );
 }
 
+function slotEndMinutes(slot: Slot): number {
+  const end = slot.value.split("-")[1] ?? "00:00";
+  const [h, m] = end.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function nextAvailableDay(
+  isoDate: string,
+  disabledWeekdays: number[],
+  blackoutDates: string[]
+): string {
+  let day = addDays(isoDate, 1);
+  let safety = 0;
+  while (isDisabledDay(day, disabledWeekdays, blackoutDates) && safety < 60) {
+    day = addDays(day, 1);
+    safety++;
+  }
+  return day;
+}
+
 function applyLeadTimeAndCutoff(
   now: { isoDate: string; hour: number; minute: number },
   leadTimeDays: number,
   cutoffs: CutoffRule[],
   disabledWeekdays: number[],
   blackoutDates: string[],
-  allSlots: Slot[]
+  allSlots: Slot[],
+  sameDayBufferMinutes: number
 ): {
   minDate: string;
   slotsByDate: Record<string, Slot[]>;
@@ -106,20 +127,29 @@ function applyLeadTimeAndCutoff(
     safety++;
   }
 
-  const isEarliestCutoffDay =
-    rawEarliest === addDays(now.isoDate, cutoffOffsetDays) &&
-    leadTimeDays <= cutoffOffsetDays;
+  // The cutoff's slot restriction only governs the earliest day when the cutoff
+  // offset (not lead time) is what pushed us there.
+  const cutoffGovernsEarliestDay = leadTimeDays <= cutoffOffsetDays;
 
-  if (isEarliestCutoffDay && !isDisabledDay(minDate, disabledWeekdays, blackoutDates)) {
-    slotsByDate[minDate] = cutoffSlots;
-  }
+  if (cutoffGovernsEarliestDay) {
+    let daySlots = cutoffSlots;
 
-  if (
-    cutoffOffsetDays === 0 &&
-    leadTimeDays === 0 &&
-    !isDisabledDay(now.isoDate, disabledWeekdays, blackoutDates)
-  ) {
-    slotsByDate[now.isoDate] = cutoffSlots;
+    // Same-day delivery: only offer windows that end at least `buffer` minutes
+    // from now, so the kitchen + courier have enough lead time.
+    if (minDate === now.isoDate && sameDayBufferMinutes > 0) {
+      const earliestDeliverable = currentMinutes + sameDayBufferMinutes;
+      daySlots = cutoffSlots.filter(
+        (s) => slotEndMinutes(s) >= earliestDeliverable
+      );
+    }
+
+    if (daySlots.length > 0) {
+      slotsByDate[minDate] = daySlots;
+    } else {
+      // Buffer removed every same-day window — advance to the next available
+      // day, which falls back to the full slot list on the storefront.
+      minDate = nextAvailableDay(minDate, disabledWeekdays, blackoutDates);
+    }
   }
 
   return { minDate, slotsByDate };
@@ -205,12 +235,13 @@ export function computeAvailability(
   rules: DeliveryRule[],
   products: ProductData[],
   attrDate = "Delivery Date",
-  attrSlot = "Delivery Slot"
+  attrSlot = "Delivery Slot",
+  nowOverride?: { isoDate: string; hour: number; minute: number }
 ): AvailabilityResponse {
   const matchingRules = findMatchingRules(rules, products);
   const effective = mergeRules(settings, matchingRules);
 
-  const now = nowInTimezone(effective.timezone);
+  const now = nowOverride ?? nowInTimezone(effective.timezone);
   const maxDate = addDays(now.isoDate, effective.maxDaysAhead);
 
   const { minDate, slotsByDate } = applyLeadTimeAndCutoff(
@@ -219,7 +250,8 @@ export function computeAvailability(
     effective.cutoffs,
     effective.disabledWeekdays,
     effective.blackoutDates,
-    effective.slots
+    effective.slots,
+    effective.sameDayBufferMinutes
   );
 
   return {

@@ -99,6 +99,22 @@ export default function SettingsPage() {
     setSaving(false);
   }, [settings, submit]);
 
+  const applyRecommendedSchedule = useCallback(() => {
+    const next: DeliverySettings = {
+      ...settings,
+      slots: DEFAULT_SETTINGS.slots,
+      cutoffs: DEFAULT_SETTINGS.cutoffs,
+      sameDayBufferMinutes: DEFAULT_SETTINGS.sameDayBufferMinutes,
+    };
+    setSettings(next);
+    setSaving(true);
+    submit(JSON.stringify(next), {
+      method: "POST",
+      encType: "application/json",
+    });
+    setSaving(false);
+  }, [settings, submit]);
+
   const toggleWeekday = (day: number) => {
     const current = settings.disabledWeekdays;
     update(
@@ -176,6 +192,15 @@ export default function SettingsPage() {
                       helpText="Minimum prep days added to all cutoff logic."
                     />
                   </FormLayout.Group>
+                  <RangeSlider
+                    label={`Same-day buffer: ${settings.sameDayBufferMinutes} min (${(settings.sameDayBufferMinutes / 60).toFixed(1)}h)`}
+                    min={0}
+                    max={360}
+                    step={15}
+                    value={settings.sameDayBufferMinutes}
+                    onChange={(v) => update("sameDayBufferMinutes", v)}
+                    helpText="Same-day windows are only offered if they END at least this long after the order time. Next-day and later are unaffected."
+                  />
                 </FormLayout>
               </BlockStack>
             </Card>
@@ -222,9 +247,16 @@ export default function SettingsPage() {
                   ])}
                 />
                 <Text as="p" variant="bodySm" tone="subdued">
-                  To edit cutoffs, modify them via the rules JSON editor in a
-                  future update. Current values are shown for reference.
+                  Cutoffs are code-defined. Use “Apply recommended schedule” to
+                  reset slots, cutoffs, and the same-day buffer to the current
+                  app defaults (other settings, blackout dates, and disabled days
+                  are kept).
                 </Text>
+                <InlineStack>
+                  <Button onClick={applyRecommendedSchedule} loading={saving}>
+                    Apply recommended schedule
+                  </Button>
+                </InlineStack>
               </BlockStack>
             </Card>
           </Layout.Section>
