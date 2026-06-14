@@ -11,6 +11,12 @@ dev_store_url = "figur-7317.myshopify.com"
 [access_scopes]
 scopes = "read_products,write_products,read_metafields,write_metafields"
 
+[auth]
+redirect_urls = [
+  "https://figur-delivery.vercel.app/auth/callback",
+  "https://figur-delivery.vercel.app/auth/shopify/callback",
+]
+
 [webhooks]
 api_version = "2025-01"
 
